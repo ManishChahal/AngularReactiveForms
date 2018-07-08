@@ -1,0 +1,244 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<div class="container-fluid">
+<div>
+  <div>
+    <h3 style="text-align : center">
+      Reactive Forms
+    </h3>
+  </div>
+  <fieldset>
+    <!--We make use of formgroup directive to bind our form model to the template -->
+    <!--
+      "userInfoForm.get('firstName').invalid && 
+        (userInfoForm.get('firstName').touched 
+        || userInfoForm.get('firstName').dirty) && 
+        userInfoForm.get('firstName').errors"-->
+    <form [formGroup] = 'userInfoForm' novalidate>
+      <div class="form-group" 
+        [class.has-error] = "firstNameHasErrors" >
+        
+        <label for="firstName" class="control-label">
+          First Name
+        </label>
+        <input type='text' formControlName = 'firstName' id='firstName' class="form-control">
+
+      <!--
+        userInfoForm.get('firstName').invalid && 
+      (userInfoForm.get('firstName').touched 
+      || userInfoForm.get('firstName').dirty) && 
+      userInfoForm.get('firstName').errors
+      -->
+      <div class="help-block" *ngIf = "firstNameHasErrors">
+      <span>{{firstNameErrors}}</span>
+      </div>
+      </div>
+      
+
+      <!--
+        'userInfoForm.get("lastName").invalid && 
+                           (userInfoForm.get("lastName").touched || 
+                           userInfoForm.get("lastName").dirty) &&
+                           userInfoForm.get("lastName").errors'
+      -->
+      <div class="form-group"
+      [class.has-error] = 'lastNameHasErrors'>
+        <label for="lastName" class="control-label">
+          Last Name
+        </label>
+        <!--Here we don't use property binding or interpolation for binding to the form control instance as we are 
+        using formControlName directive which is an attribute directive and we are just binding to the string 
+        lastName which is the name of the form control instance. If we make use of property binding or interpolation or 
+        bind-propertyName than it will treat it as template expression and will try to evaluate it against the component
+        class and will throw error as there it will not find something named like this or if we created for control
+        instances as component class property than also when it will evaluate it will return an object-->
+        <input type="text" formControlName = 'lastName' id="lastName" class="form-control">
+          <!--
+            'userInfoForm.get("lastName").invalid && 
+                      (userInfoForm.get("lastName").touched || 
+                      userInfoForm.get("lastName").dirty) &&
+                      userInfoForm.get("lastName").errors'>
+          <span *ngIf = 'userInfoForm.get("lastName").errors.required'>
+            Last Name is required 
+          </span>
+          <span *ngIf = 'userInfoForm.get("lastName").errors.minlength'>
+            Last Name must be 3 characters long
+          </span>
+          -->
+        <div class="help-block" *ngIf = 'lastNameHasErrors'>
+          <span>
+            {{lastNameHasErrors}}
+          </span>
+        </div>
+      </div>
+      <!--
+      <div>
+          <button (click)='populateDefaultData()'>
+            Populate Default Data
+          </button>
+        </div>
+        -->
+      <div formGroupName = 'emailGroup'
+            [class.has-error] = 'userInfoForm.get("emailGroup").errors'>
+            <!--
+              'userInfoForm.get("emailGroup.emailAddress").invalid &&
+                                   (userInfoForm.get("emailGroup.emailAddress").touched ||
+                                    userInfoForm.get("emailGroup.emailAddress").dirty)'
+            -->
+        <div class="form-group"
+              [class.has-error] = 'emailAddressHasErrors'>
+          <label for="emailAddress" class="control-label">
+            Email Address
+          </label>
+          <input class="form-control" id="emailAddress" type="email" formControlName = 'emailAddress'>
+
+          <!--
+            'userInfoForm.get("emailGroup.emailAddress").invalid &&
+                                           (userInfoForm.get("emailGroup.emailAddress").touched ||
+                                           userInfoForm.get("emailGroup.emailAddress").dirty)'>
+          <span *ngIf = 'userInfoForm.get("emailGroup.emailAddress").errors.required'>
+            Email Address is required
+          </span>
+
+          <span *ngIf = 'userInfoForm.get("emailGroup.emailAddress").errors.pattern'>
+            Email Address must be in following format : xyz@abc.com
+          </span>
+          -->
+          <div class="help-block" *ngIf = 'emailAddressHasErrors'>
+            <span>
+              {{emailAddressHasErrors}}
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group"
+            [class.has-error] = 'userInfoForm.get("emailGroup.confirmEmail").invalid &&
+                                (userInfoForm.get("emailGroup.confirmEmail").touched ||
+                                userInfoForm.get("emailGroup.confirmEmail").dirty)'>
+            <label for="confirmEmailAddress" class="control-label">
+              Confirm Email
+            </label>
+            <input class="form-control" id="confirmEmailAddress" type="email" formControlName = 'confirmEmail'>
+
+            <div class="help-block" *ngIf = 'userInfoForm.get("emailGroup.confirmEmail").invalid &&
+                                              (userInfoForm.get("emailGroup.confirmEmail").touched ||
+                                              userInfoForm.get("emailGroup.confirmEmail").dirty)'>
+            <span *ngIf = 'userInfoForm.get("emailGroup.confirmEmail").errors.required'>
+              You must confirm your email address
+            </span>
+            </div>
+          </div>
+
+      </div>
+
+    <div formArrayName = 'phoneNumberArray'>
+      <div class="form-group" *ngFor = 'let x of phoneNumberArray.controls ; let i = index'>
+          <label for="{{'phoneNumber' + i }}" class="control-label">
+            Phone Number
+          </label>
+          <input class="form-control" [id]="'phoneNumber' + i " type="tel" [formControlName] = "'phoneNumber' + i ">
+          <!--
+          <div *ngIf = 'phoneNumberArray.controls[i].errors'>
+            <span>
+              {{phoneHasErrors}}
+            </span>
+          </div>
+          -->
+      </div>
+      <button class="btn btn-primary" (click) = 'addAlternatePhoneNumber()'>
+          Add Alternate Phone Number
+        </button>
+        <button class="btn btn-default" style="margin-left : 100px" (click) = 'removeAlternatePhoneNumber()'>
+            Remove Alternate Phone Number
+          </button>
+    </div>
+
+        <div formGroupName = 'address'>
+            <label>
+                Address Details<hr/>
+              </label>
+          <div>
+            <span class="col-md-6 form-group">
+              <label for="houseNumber" class="control-label col-md-2">
+                  House No.
+              </label>
+              <div class="col-md-10">
+              <input class="form-control" type="text" formControlName = 'houseNo' id="houseNumber">
+            </div>
+            </span>
+            <span class="col-md-6 form-group">
+              <label for="society" class="control-label col-md-2">
+                  Society
+              </label>
+              <div class="col-md-10">
+              <input class="form-control" type="text" id="society" formControlName = 'society'>
+            </div>
+            </span>
+          </div>
+
+          <div>
+
+            <span class="form-group col-md-4">
+              <label class="control-label col-md-3" for="street">
+                Street
+              </label>
+
+              <div class="col-md-9">
+                <input class="form-control" formControlName = 'street' type="text" id="street">
+
+              </div>
+            </span>
+  
+            <span class='form-group col-md-4'>
+                <label class="control-label col-md-3" for="landmark">
+                    Landmark
+                  </label>
+      
+                  <div class="col-md-9">
+                    <input type="text" formControlName = 'landMark' id="landmark" class="form-control">
+                  </div>
+            </span>
+
+            <span class="form-group col-md-4">
+              <label class="control-label col-md-3" for="zipcode">
+                Zip Code
+              </label>
+              <div class="col-md-9">
+                <input type="text" formControlName = 'zipCode' id="zipcode" class="form-control">
+              </div>
+            </span>
+
+          </div>
+
+          <div>
+            <span class="form-group col-md-4">
+              <label class="control-label col-md-3" for="city">
+                City
+              </label>
+              <div class="col-md-9">
+                <input type="text" id="city" formControlName = 'city' class="form-control">
+              </div>
+            </span>
+
+            <span class="form-group col-md-4">
+              <label class="control-label col-md-3" for="state">
+                State
+              </label>
+              <div class="col-md-9">
+                <input type="text" class="form-control" id="state" formControlName = 'state'>
+              </div>
+            </span>
+
+            <div class="form-group col-md-4">
+              <label class="control-label col-md-3" for="country">
+                Country
+              </label>
+              <div class="col-md-9">
+                <input type="text" formControlName = 'country' id="country" class="form-control">
+              </div>
+            </div>
+          </div>
+        </div>
+    </form>
+  </fieldset>
+</div>
+</div>
